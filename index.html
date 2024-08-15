@@ -1,0 +1,205 @@
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .outer {
+      width: 100%; height: 100%; position: relative;
+    }
+
+    .container .img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    .x_button {
+      color: #fff;
+    }
+    .x_button:hover {
+      color: #DD99FF;
+    }
+  </style>
+  <script>
+    var array = [];
+    var cur = 0;
+
+    function mouseover(e) {
+      // console.log("mouseover");
+    }
+
+    function mousemove(e) {
+      var box = document.getElementById('img_area');
+      let image_ratio = 1192 / 720;
+      let screen_ratio = box.width / box.height;
+      let rounded_x = 0;
+      let rounded_y = 0;
+      if(image_ratio < screen_ratio) {
+        rounded_x = Math.round((e.clientX - box.width / 2) * 720 / box.height + 596);
+        rounded_y = Math.round(e.clientY * 720 / box.height);
+      } else if(image_ratio == screen_ratio) {
+        rounded_x = Math.round(e.clientX * 1192 / box.width);
+        rounded_y = Math.round(e.clientY * 720 / box.height);
+      } else {
+        rounded_x = Math.round(e.clientX * 1192 / box.width);
+        rounded_y = Math.round((e.clientY - box.height / 2) * 1192 / box.width + 360);
+      }
+      if(rounded_x < 0 || rounded_x >= 1192 || rounded_y < 0 || rounded_y >= 720)
+        return;
+      if(cur != array[rounded_y * 1192 + rounded_x]) {
+        cur = array[rounded_y * 1192 + rounded_x];
+        switch(cur) {
+          case 0:
+            box.src = 'dbs_products/all.png';
+            break;
+          case 1:
+            box.src = 'dbs_products/P8.png';
+            break;
+          case 2:
+            box.src = 'dbs_products/P16.png';
+            break;
+          case 3:
+            box.src = 'dbs_products/R16.png';
+            break;
+          case 4:
+            box.src = 'dbs_products/P32.png';
+            break;
+          case 5:
+            box.src = 'dbs_products/R32.png';
+            break;
+          case 6:
+            box.src = 'dbs_products/Standard.png';
+            break;
+          case 7:
+            box.src = 'dbs_products/Directional.png';
+            break;
+          case 8:
+            box.src = 'dbs_products/RC.png';
+            break;
+          case 9:
+            box.src = 'dbs_products/StimViewXT.png';
+            break;
+        }
+      }
+    }
+
+    var popup_visible = false;
+
+    function click_img(e) {
+      var box = document.getElementById('img_area');
+      let image_ratio = 1192 / 720;
+      let screen_ratio = box.width / box.height;
+      let rounded_x = 0;
+      let rounded_y = 0;
+      if(image_ratio < screen_ratio) {
+        rounded_x = Math.round((e.clientX - box.width / 2) * 720 / box.height + 596);
+        rounded_y = Math.round(e.clientY * 720 / box.height);
+      } else if(image_ratio == screen_ratio) {
+        rounded_x = Math.round(e.clientX * 1192 / box.width);
+        rounded_y = Math.round(e.clientY * 720 / box.height);
+      } else {
+        rounded_x = Math.round(e.clientX * 1192 / box.width);
+        rounded_y = Math.round((e.clientY - box.height / 2) * 1192 / box.width + 360);
+      }
+      if(rounded_x < 0 || rounded_x >= 1192 || rounded_y < 0 || rounded_y >= 720)
+        return;
+      var _cur = array[rounded_y * 1192 + rounded_x];
+      if(_cur != 0 && !popup_visible) {
+        document.getElementById('popup_area').style.visibility = 'visible';
+        popup_visible = true;
+        switch(_cur) {
+          case 1:
+          document.getElementById('popup_title').innerText = 'Vercise™ Genus P8';
+            break;
+          case 2:
+          document.getElementById('popup_title').innerText = 'Vercise™ Genus P16';
+            break;
+          case 3:
+          document.getElementById('popup_title').innerText = 'Vercise™ Genus R16';
+            break;
+          case 4:
+          document.getElementById('popup_title').innerText = 'Vercise™ Genus P32';
+            break;
+          case 5:
+          document.getElementById('popup_title').innerText = 'Vercise™ Genus R32';
+            break;
+          case 6:
+            document.getElementById('popup_title').innerText = 'Vercise™ Standard Lead';
+            break;
+          case 7:
+            document.getElementById('popup_title').innerText = 'Vercise™ Cartesia™ Directional Lead';
+            break;
+          case 8:
+          document.getElementById('popup_title').innerText = 'Remote Control';
+            break;
+          case 9:
+          document.getElementById('popup_title').innerText = 'StimView™ XT';
+            break;
+        }
+      }
+    }
+
+    function close_popup() {
+      document.getElementById('img_area').src = 'dbs_products/all.png';
+      document.getElementById('popup_area').style.visibility = 'hidden';
+      popup_visible = false;
+    }
+
+    async function fetch_array() {
+      const response = await fetch('https://raw.githubusercontent.com/dmk2436/BSCI/main/buff.json');
+      const response_json = await response.json();
+      const _array = Int8Array.from(atob(response_json['indices']), c => c.charCodeAt(0));
+      array = _array;
+      return _array;
+    }
+    
+    fetch_array();
+    
+    resize_element = function() {
+      let w = document.getElementById('img_area').width;
+      let h = document.getElementById('img_area').height;
+      if(w/h < 1192/720) {
+        document.getElementById('popup_area').style.width = document.getElementById('img_area').width;
+        document.getElementById('popup_area').style.height = document.getElementById('img_area').width * 720 / 1192;
+        document.getElementById('popup_area').style.marginLeft = 0;
+        document.getElementById('popup_area').style.marginRight = 0;
+        document.getElementById('popup_area').style.marginTop = (h - document.getElementById('img_area').width * 720 / 1192) / 2;
+        document.getElementById('popup_area').style.marginBottom = (h - document.getElementById('img_area').width * 720 / 1192) / 2;
+      }
+      else if(w/h == 1192/720) {
+        document.getElementById('popup_area').style.width = document.getElementById('img_area').width;
+        document.getElementById('popup_area').style.height = document.getElementById('img_area').height;
+      }
+      else {
+        document.getElementById('popup_area').style.width = document.getElementById('img_area').height * 1192 / 720;
+        document.getElementById('popup_area').style.height = document.getElementById('img_area').height;
+        document.getElementById('popup_area').style.marginLeft = (w - document.getElementById('img_area').height * 1192 / 720) / 2;
+        document.getElementById('popup_area').style.marginRight = (w - document.getElementById('img_area').height * 1192 / 720) / 2;
+        document.getElementById('popup_area').style.marginTop = 0;
+        document.getElementById('popup_area').style.marginBottom = 0;
+      }
+    }
+
+    window.onload = resize_element;
+    addEventListener("resize", resize_element);
+  </script>
+</head>
+<body>
+  <div id="outer_area" class="outer">
+    <div id="popup_area" class="container" style="position: absolute; z-index: 100; visibility: hidden;">
+      <div class="img" style="position: absolute; background-color: rgba(0, 0, 0, 0.5);">
+        <div style="width: calc(100% - 5rem); height: calc(100% - 5rem); margin-left: 2.5rem; margin-right: 2.5rem; margin-top: 2.5rem; margin-bottom: 2.5rem; border-radius: 1rem; overflow: hidden; background-color: #fff;">
+          <div style="width: 100%; height: 2.5rem; display: flex; justify-content: space-between; padding: 0.5rem; user-select: none; background-color: #BB33FF;">
+            <p id="popup_title" style="display: inline-block; margin: 0 0 0 0.5rem; font-size:1.65rem; font-weight: bold; color: #fff;">Product</p>
+            <p class="x_button" onclick="close_popup(event)" style="display: inline-block; margin: 0 1.5rem 0 0; font-size:1.65rem; font-weight: bold;">✕</p>
+          </div>
+          <div style="padding: 0.75rem 1rem 1rem 1rem;">
+            <p id="popup_description" style="margin: 0;">Description</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="img_outer_area" class="container" style="z-index: 0">
+      <img id="img_area" class="img" src="dbs_products/all.png" style="user-select: none;" onmouseover="mouseover(event)" onmousemove="mousemove(event)" onclick="click_img(event)" />
+    </div>
+  </div>
+</body>
