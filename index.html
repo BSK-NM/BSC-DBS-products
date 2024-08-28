@@ -145,7 +145,7 @@
     }
 
     async function fetch_array() {
-      const response = await fetch('https://raw.githubusercontent.com/dmk2436/BSC-DBS-products/main/buff.json');
+      const response = await fetch('https://raw.githubusercontent.com/BSK-NM/BSC-DBS-products/main/buff.json');
       const response_json = await response.json();
       const _array = Int8Array.from(atob(response_json['indices']), c => c.charCodeAt(0));
       array = _array;
